@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 class MovieRental {
     int customerID;
@@ -36,12 +35,11 @@ class MovieRental {
 
 
 }
-abstract class Person extends MovieRental {
+abstract class Person {
     String name;
     int customerID;
     String membership;
     Person(String name, int customerID, String membership) {
-        super(customerID, 0, 0, true);
 
         this.name = name;
         this.customerID = customerID;
@@ -50,9 +48,10 @@ abstract class Person extends MovieRental {
     public String toString() {
         return "Name: " + this.name + "\nCustomer ID: " + this.customerID + "\nMembership: " + this.membership;
     }
-    public void Info(){ /** needs to be abstract? **/
-        System.out.println(this.toString());
+    public void Info(){ // needs to be abstract? //
+        System.out.println(this);
     }
+
 
 }
 class Student extends Person {
@@ -103,8 +102,8 @@ class External_Member extends Person {
 }
 
 interface Payment {
-    final static double STUDENT_FEE = 5.0;
-    final static double EXTERNAL_MEMBER_FEE = 10.0;
+    double STUDENT_FEE = 5.0;
+    double EXTERNAL_MEMBER_FEE = 10.0;
     double calculateFee();
 
 
@@ -115,12 +114,15 @@ class Movies{
     Movies(int movieID, String name) {
         this.movieID = movieID;
         this.name = name;
+
+
     }
 
     public String getMovieID() {
         return String.valueOf(this.movieID);
     }
     public void show() {
+
         System.out.println("Movie Name: " + this.name);
         System.out.println("Movie ID: " + this.movieID);
     }
@@ -132,6 +134,14 @@ public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         ArrayList<Movies> movies = new ArrayList<>();
+        // In my example, I assume that 1000s = Drama, 2000s = Action, 3000s = Sci-Fi.
+        movies.add(new Movies(1001, "The Godfather"));
+        movies.add(new Movies(1002, "The Dark Knight"));
+        movies.add(new Movies(2001, "The Lord of the Rings"));
+        movies.add(new Movies(2002, "The Shawshank Redemption"));
+        movies.add(new Movies(3001, "Avengers: Infinity War"));
+        movies.add(new Movies(3002, "The Matrix"));
+        movies.add(new Movies(3003, "Star Wars: Rise of Skywalker"));
         ArrayList<Student> students = new ArrayList<>();
         ArrayList<External_Member> external_members = new ArrayList<>();
         System.out.println("Programming 2 Final Project: Movie Rental System");
@@ -169,20 +179,48 @@ public class Main {
                     break;
                     case 3:
                         for (Student s : students) {
-                            s.printInfo();
+                            s.Info();
                         }
                         break;
                         case 4:
                             for (External_Member e : external_members) {
-                                e.printInfo();
+                                e.Info();
                             }
                             break;
                             case 5:
+                                for (Movies m : movies) {
+                                    m.show();
+                                }
 
                                 break;
                                 case 6:
+                                  System.out.println("Enter the movie name you want to rent: ");
+                                  String movie_name = input.next();
+                                  for (Movies m : movies) {
+                                      m.show();
+                                  }
+                                  int movieID = 0;
+                                  for (Movies m : movies) {
+                                      if (m.name.equalsIgnoreCase(movie_name)) {
+                                          movieID = m.movieID;
+                                      }
+                                  }
+                                  System.out.println("Enter the number of nights you want to rent: ");
+                            
                                     break;
                                     case 8:
+                                        System.out.println("Enter the movie name you want to return: ");
+                                        String movie_name_return = input.next();
+                                        for (Movies m : movies) {
+                                            m.show();
+                                        }
+                                        int movieID_return = 0;
+                                        for (Movies m : movies) {
+                                            if (m.name.equalsIgnoreCase(movie_name_return)) {
+                                                movieID_return = m.movieID;
+                                            }
+                                        }
+
                                         break;
                                         case 9:
                                             System.out.println("Logging out...");
