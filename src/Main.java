@@ -123,8 +123,8 @@ class Movies{
     }
     public void show() {
 
-        System.out.println("Movie Name: " + this.name);
-        System.out.println("Movie ID: " + this.movieID);
+        System.out.println("| " + this.name + " | ID: " + this.movieID+ " |");
+
     }
 
 
@@ -141,94 +141,105 @@ public class Main {
         movies.add(new Movies(2002, "The Shawshank Redemption"));
         movies.add(new Movies(3001, "Avengers: Infinity War"));
         movies.add(new Movies(3002, "The Matrix"));
-        movies.add(new Movies(3003, "Star Wars: Rise of Skywalker"));
+        movies.add(new Movies(3003, "Star Wars: The Rise of Skywalker"));
         ArrayList<Student> students = new ArrayList<>();
         ArrayList<External_Member> external_members = new ArrayList<>();
-        System.out.println("Programming 2 Final Project: Movie Rental System");
+        System.out.println("MOVIE RENTAL SYSTEM:");
         while (true) {
-            System.out.println("1. Add Student\n2. Add External Member\n3. List Students\n4. List External Members\n5. List Movies\n6. Rent a movie\n8. Return a movie\n9. Exit\n> ");
-        int choice = input.nextInt();
-        switch (choice) {
-            case 1:
-                System.out.println("Enter Student name: ");
-                String name = input.next();
-                System.out.println("Enter Student ID: ");
-                int customerID = input.nextInt();
-                System.out.println("Enter Student Grade: ");
-                int grade = input.nextInt();
-                System.out.println("Enter Student Membership: ");
-                String membership = input.next();
-                Student student = new Student(name, customerID, membership, grade);
-                students.add(student);
-                System.out.println("Student added!");
-                break;
+            System.out.print("\n1. Add Student\n2. Add External Member\n3. List Students\n4. List External Members\n5. List Movies\n6. Rent a movie\n8. Return a movie\n9. Exit\n> ");
+            int choice = input.nextInt();
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter student's name: ");
+                    String name = input.next();
+                    System.out.print("Enter Student ID: ");
+                    int customerID = input.nextInt();
+                    System.out.print("Enter student's grade: ");
+                    int grade = input.nextInt();
+                    System.out.print("Enter Student membership: ");
+                    String membership = input.next();
+                    Student student = new Student(name, customerID, membership, grade);
+                    students.add(student);
+                    System.out.println("Student added!");
+                    break;
                 case 2:
-                    System.out.println("Enter client name: ");
+                    System.out.print("Enter client's name: ");
                     String client_name = input.next();
-                    System.out.println("Enter client ID: ");
+                    System.out.print("Enter client ID: ");
                     int client_id = input.nextInt();
                     System.out.println("Enter client Membership: ");
                     String client_membership = input.next();
-                    System.out.println("Enter client Job: ");
+                    System.out.println("Enter client's job: ");
                     String client_job = input.next();
-                    System.out.println("Enter client Organization Name: ");
+                    System.out.print("Enter client's organization name: ");
                     String client_org_name = input.next();
                     External_Member external_member = new External_Member(client_name, client_id, client_membership, client_job, client_org_name);
                     external_members.add(external_member);
                     System.out.println("Client added!");
                     break;
-                    case 3:
-                        for (Student s : students) {
-                            s.Info();
+                case 3:
+                    for (Student s : students) {
+                        s.Info();
+                    }
+                    if (students.isEmpty()) {
+                        System.out.println("No students added.");
+                    }
+                    break;
+                case 4:
+                    for (External_Member e : external_members) {
+                        e.Info();
+                    }
+                    if (external_members.isEmpty()) {
+                        System.out.println("No clients added.");
+                    }
+                    break;
+                case 5:
+                    for (Movies m : movies) {
+                        m.show();
+                    }
+
+                    break;
+                case 6:
+                    for (Movies m : movies) {
+                        m.show();
+                    }
+                    System.out.println("Enter the movie name you want to rent: ");
+                    String movie_name = input.next();
+
+
+                    for (Movies m : movies) {
+                        if (m.name.equalsIgnoreCase(movie_name)) {
+                            movie_name = m.name;
+
                         }
-                        break;
-                        case 4:
-                            for (External_Member e : external_members) {
-                                e.Info();
-                            }
-                            break;
-                            case 5:
-                                for (Movies m : movies) {
-                                    m.show();
-                                }
+                    }
+                    System.out.println("Enter the number of nights you want to rent: ");
+                    int nights = input.nextInt();
 
-                                break;
-                                case 6:
-                                  System.out.println("Enter the movie name you want to rent: ");
-                                  String movie_name = input.next();
-                                  for (Movies m : movies) {
-                                      m.show();
-                                  }
-                                  int movieID = 0;
-                                  for (Movies m : movies) {
-                                      if (m.name.equalsIgnoreCase(movie_name)) {
-                                          movieID = m.movieID;
-                                      }
-                                  }
-                                  System.out.println("Enter the number of nights you want to rent: ");
-                            
-                                    break;
-                                    case 8:
-                                        System.out.println("Enter the movie name you want to return: ");
-                                        String movie_name_return = input.next();
-                                        for (Movies m : movies) {
-                                            m.show();
-                                        }
-                                        int movieID_return = 0;
-                                        for (Movies m : movies) {
-                                            if (m.name.equalsIgnoreCase(movie_name_return)) {
-                                                movieID_return = m.movieID;
-                                            }
-                                        }
 
-                                        break;
-                                        case 9:
-                                            System.out.println("Logging out...");
-                                            System.exit(0);
-                                        default:
-                                            System.out.println("Invalid choice! Try again.");
-                                            break;
-        }
+                    break;
+                case 8:
+                    for (Movies m : movies) {
+                        m.show();
+                    }
+                    System.out.println("Enter the movie name you want to return: ");
+                    String movie_name_return = input.next();
+
+                    for (Movies m : movies) {
+                        if (m.name.equalsIgnoreCase(movie_name_return)) {
+                            movie_name_return = m.name;
+
+                        }
+                    }
+
+                    break;
+                case 9:
+                    System.out.println("Logging out...");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice! Try again.\n");
+                    break;
+            }
         }
     }
 }
