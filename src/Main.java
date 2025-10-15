@@ -24,13 +24,12 @@ class MovieRental {
             return "Unavailable";
 
         }
-
     }
     public void printInfo() {
         System.out.println("Customer ID: " + this.customerID);
         System.out.println("Movie ID: " + this.movieID);
         System.out.println("Nights Rented: " + this.nights_rented);
-        System.out.println("Rentable: " + getMovieStatus());
+        System.out.println("Status: " + getMovieStatus());
     }
 
 
@@ -105,6 +104,7 @@ interface Payment {
     double STUDENT_FEE = 5.0;
     double EXTERNAL_MEMBER_FEE = 10.0;
     double calculateFee();
+    
 
 
 }
@@ -144,6 +144,7 @@ public class Main {
         movies.add(new Movies(3003, "Star Wars: The Rise of Skywalker"));
         ArrayList<Student> students = new ArrayList<>();
         ArrayList<External_Member> external_members = new ArrayList<>();
+        ArrayList<MovieRental> movie_rentals = new ArrayList<>();
         System.out.println("MOVIE RENTAL SYSTEM:");
         while (true) {
             System.out.print("\n1. Add Student\n2. Add External Member\n3. List Students\n4. List External Members\n5. List Movies\n6. Rent a movie\n8. Return a movie\n9. Exit\n> ");
@@ -153,11 +154,11 @@ public class Main {
                     System.out.print("Enter student's name: ");
                     String name = input.next();
                     System.out.print("Enter Student ID: ");
-                    int customerID = input.nextInt();
+                   int customerID = input.nextInt();
                     System.out.print("Enter student's grade: ");
                     int grade = input.nextInt();
                     System.out.print("Enter Student membership: ");
-                    String membership = input.next();
+                   String membership = input.next();
                     Student student = new Student(name, customerID, membership, grade);
                     students.add(student);
                     System.out.println("Student added!");
@@ -200,10 +201,26 @@ public class Main {
 
                     break;
                 case 6:
+                    System.out.print("Student or client rent? : ");
+                    String choice2 = input.next();
+                    if (choice2.equalsIgnoreCase("Student")) {
+                        for (Student s : students) {
+                            s.Info();
+                        }
+                        System.out.println("");
+                  
+                        
+                        
+                        
+                    }
+                    else if (choice2.equalsIgnoreCase("Client")) {
+                        
+                    }
                     for (Movies m : movies) {
                         m.show();
                     }
-                    System.out.println("Enter the movie name you want to rent: ");
+                    
+                    System.out.print("Movie assigned: ");
                     String movie_name = input.next();
 
 
@@ -213,8 +230,9 @@ public class Main {
 
                         }
                     }
-                    System.out.println("Enter the number of nights you want to rent: ");
+                    System.out.print("Number of nights rented: ");
                     int nights = input.nextInt();
+                    
 
 
                     break;
