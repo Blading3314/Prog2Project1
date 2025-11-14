@@ -394,6 +394,7 @@ public class Main {
                     }
 
                     System.out.println("\n--- Movies Currently Rented by " + inputRenterType + " ---");
+                    /** must add here who rented what */
                     System.out.printf("%-30s  %-12s%n", "Movie Name", "Movie ID");
                     System.out.println("-----------------------------------------------");
 
