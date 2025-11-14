@@ -2,14 +2,14 @@ import java.util.*;
 
 class MovieRental implements Payment {
     int customerID;
-    String membership;   // New: Membership type (Student or Regular)
+    String membership;  
     int movieID;
     int nights_rented;
     boolean rentable;
 
     MovieRental(int customerID, String membership, int movieID, int nights_rented, boolean rentable) {
         this.customerID = customerID;
-        this.membership = membership;  // Assign membership
+        this.membership = membership; 
         this.movieID = movieID;
         this.nights_rented = nights_rented;
         this.rentable = rentable;
@@ -34,7 +34,7 @@ class MovieRental implements Payment {
 
     @Override
     public double calculate() {
-        int additionalNights = Math.max(0, nights_rented - 7);  // excess nights beyond the first week
+        int additionalNights = Math.max(0, nights_rented - 7);  // verify if the nights exceed the first week
         if (isStudent()) {
             return STUDENT_FEE + (additionalNights);  // $1 per extra night for students
         } else {
@@ -146,7 +146,7 @@ class Movies {
     }
 
     public void showWithoutStatus() {
-     // case 8
+     // this is only to show print details without the status
         System.out.printf(" %-25s  %-10d %n", this.name, this.movieID);
     }
 
@@ -162,7 +162,6 @@ public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         ArrayList<Movies> movies = new ArrayList<>();
-        // In my example, the 1000s = Drama, 2000s = Action, 3000s = Sci-Fi.
         movies.add(new Movies(1001, "The Godfather"));
         movies.add(new Movies(1002, "The Dark Knight"));
         movies.add(new Movies(2001, "The Lord of the Rings"));
@@ -178,7 +177,7 @@ public class Main {
         ArrayList<MovieRental> movie_rentals = new ArrayList<>();
         System.out.println("MOVIE RENTAL SYSTEM:");
         while (true) {
-            System.out.print("\n1. Add Student\n2. Add External Member\n3. Add a movie\n4. List Students\n5. List External Members\n6. List Movies\n7. Rent a movie\n8. Return a movie\n9. Exit\n> ");
+            System.out.print("\n1. Add Student\n2. Add External Member\n3. Add a movie\n4. List all Students\n5. List all External Members\n6. List Movies\n7. Rent a movie\n8. Return a movie\n9. Exit\n> ");
             int choice = input.nextInt();
             switch (choice) {
                 case 1:
@@ -190,7 +189,7 @@ public class Main {
                                 try {
                             System.out.print("Enter Student ID\n> ");
                             int customerID = input.nextInt();
-                            if (students.stream().anyMatch(s -> s.customerID == customerID)) {
+                            if (students.stream().anyMatch(s -> s.customerID == customerID)) { //verify if ID is already taken
                                 throw new Exception("Student with that ID already exists. Please try again.");
                             }
                             System.out.print("Enter student's school name\n> ");
@@ -314,10 +313,10 @@ public class Main {
                                     e.Info();
                                 }
                                
-                                System.out.print("Enter member's name\n> ");
-                                String clientName = input.next();
+                                System.out.print("Enter member's ID\n> ");
+                                int clientID = input.nextInt();
                                 for (External_Member e : external_members) {
-                                    if (e.name.equalsIgnoreCase(clientName)) {
+                                    if (e.customerID == clientID) {
                                         renter = e;
                                         break;
                                     }
@@ -365,7 +364,7 @@ public class Main {
                             System.out.print("Enter number of nights rented\n> ");
                             nights = input.nextInt();
                             if (nights <= 0) {
-                                System.out.println("Invalid input. Number of nights must be positive.");
+                                System.out.println("Invalid input. Number of nights must be valid.");
                             }
                         } catch (InputMismatchException e) {
                             System.out.println("Invalid input. Please enter a valid number.");
@@ -376,9 +375,8 @@ public class Main {
                     MovieRental rental = new MovieRental(renter.customerID, membershipType, Integer.parseInt(movieToRent.getMovieID()), nights, false);
                     movie_rentals.add(rental);
                     movieToRent.setAvailability(false);
-                    System.out.println("Movie rented successfully!");
-                    System.out.printf("Renter: %s%nMovie: %s%nNights: %d%n", renter.name, movieToRent.name, nights);
                     rental.Info(false); // this only to not show the fee just yet
+                     System.out.println("Movie rented successfully.");
 
                     break;
                 case 8:
@@ -443,7 +441,7 @@ public class Main {
                         }
 
                         if (!isReturned) {
-                            System.out.println("The requested movie could not be returned. Verify the movie name and try again.");
+                            System.out.println("The requested movie could not be returned. Press 'Enter' to try again.");
                         }
                     }
                     break;
