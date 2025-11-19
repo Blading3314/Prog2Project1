@@ -1,15 +1,16 @@
 import java.util.*;
+import java.io.*;
 
 class MovieRental implements Payment {
     int customerID;
-    String membership;  
+    String membership;
     int movieID;
     int nights_rented;
     boolean rentable;
 
     MovieRental(int customerID, String membership, int movieID, int nights_rented, boolean rentable) {
         this.customerID = customerID;
-        this.membership = membership; 
+        this.membership = membership;
         this.movieID = movieID;
         this.nights_rented = nights_rented;
         this.rentable = rentable;
@@ -17,9 +18,6 @@ class MovieRental implements Payment {
     public String getMovieStatus() {
         return this.rentable ? "Available" : "Rented";
     }
-    
-    
-
     public void Info(boolean showFee) {
         System.out.println("\n--- Movie Rental Information ---");
         System.out.printf("Customer ID     : %d%n", this.customerID);
@@ -34,17 +32,16 @@ class MovieRental implements Payment {
 
     @Override
     public double calculate() {
-        int additionalNights = Math.max(0, nights_rented - 7);  // verify if the nights exceed the first week
-        if (isStudent()) {
+        int additionalNights = 0;
+        if (this.nights_rented > 7) {
+            additionalNights = this.nights_rented - 7; // extra fees verifier
+        }
+        if (this.membership.equalsIgnoreCase("Student")) {
             return STUDENT_FEE + (additionalNights);  // $1 per extra night for students
         } else {
             return EXTERNAL_MEMBER_FEE + (additionalNights * 2); // $2 per extra night for members
         }
 
-    }
-
-    public boolean isStudent() {
-        return "Student".equalsIgnoreCase(this.membership);
     }
 }
 abstract class Person {
@@ -61,7 +58,7 @@ abstract class Person {
         return "Name: " + this.name + "\nCustomer ID: " + this.customerID + "\nMembership: " + this.membership;
     }
     abstract public void Info();
-    
+
 }
 
 class Student extends Person {
@@ -72,8 +69,6 @@ class Student extends Person {
         this.grade = grade;
         this.membership = "Student";
         this.schoolName = schoolName;
-
-
     }
 
     public void Info() {
@@ -86,13 +81,10 @@ class Student extends Person {
     }
 
     public String toString() {
-        return super.toString() + "\nGrade: " + this.grade;
+        return super.toString() + "\nGrade: " + this.grade + "\nSchool Name: " + this.schoolName;
     }
 }
 class External_Member extends Person {
-    String name;
-    int customerID;
-    String membership;
     String job;
     String org_name;
     External_Member(String name, int customerID, String job, String org_name) {
@@ -141,12 +133,12 @@ class Movies {
 
     public void show() {
         String availability = isAvailable ? "Available" : "Unavailable";
-
+    // Printing a string, left aligned and takes up 30, 12 and 15 characters.
         System.out.printf("%-30s  %-12d  %-15s%n", this.name, this.movieID, availability);
     }
 
     public void showWithoutStatus() {
-     // this is only to show print details without the status
+        // this is only to show print details without the status
         System.out.printf(" %-25s  %-10d %n", this.name, this.movieID);
     }
 
@@ -157,36 +149,136 @@ class Movies {
     public boolean getAvailability() {
         return this.isAvailable;
     }
+    public String toString() {
+        return this.name + " - Movie ID: " + this.movieID;
+    }
+
 }
 public class Main {
     public static void main(String[] args) {
+
+        File studentFile = new File("Students.txt");
+        File memberFile = new File("Members.txt");
+        File movieFile = new File("Movies.txt");
         Scanner input = new Scanner(System.in);
+
         ArrayList<Movies> movies = new ArrayList<>();
-        movies.add(new Movies(1001, "The Godfather"));
-        movies.add(new Movies(1002, "The Dark Knight"));
-        movies.add(new Movies(2001, "The Lord of the Rings"));
-        movies.add(new Movies(2002, "The Shawshank Redemption"));
-        movies.add(new Movies(3001, "Avengers: Infinity War"));
-        movies.add(new Movies(3002, "The Matrix"));
-        movies.add(new Movies(3003, "Star Wars"));
+
         ArrayList<Student> students = new ArrayList<>();
-        students.add(new Student("Thomas", 2470211,  "Vanier", 80));
-        
+
         ArrayList<External_Member> external_members = new ArrayList<>();
-        external_members.add(new External_Member("Mister", 64512, "Engineer", "Google"));
+
         ArrayList<MovieRental> movie_rentals = new ArrayList<>();
+
+        if (studentFile.exists()) {
+            try {
+                Scanner studentFileScanner = new Scanner(studentFile);
+
+                String name = null;
+                int id = 0;
+                String schoolName = null;
+                int grade = 0;
+
+                while (studentFileScanner.hasNextLine()) /* loop until no more lines */{
+                    String line = studentFileScanner.nextLine();
+
+                    if (line.startsWith("Name: ")) {
+                        name = line.substring(6); // take name after "Name: (6 characters)"
+                    }
+                    else if (line.startsWith("Customer ID: ")) {
+                        id = Integer.parseInt(line.substring(13));
+                    }
+                    else if (line.startsWith("Membership: ")) {
+                        // skipping, because constructor does it already (this.membership = "Student")
+                    }
+                    else if (line.startsWith("Grade: ")) {
+                        grade = Integer.parseInt(line.substring(7)); //convert to int
+                    }
+                    else if (line.startsWith("School Name: ")) {
+                        schoolName = line.substring(13);
+                    }
+                    else if (line.startsWith("---")) {
+                        /* end of student's info when there's "---"
+                        at the bottom of the line
+                         */
+                        students.add(new Student(name, id, schoolName, grade));
+                    }
+                }
+                studentFileScanner.close();
+
+            } catch (Exception e) {
+                System.out.println("Cannot load students file");
+            }
+        }
+        // almost the same logic as students
+        if (memberFile.exists()) {
+            try{
+                Scanner memberFileScanner = new Scanner(memberFile);
+                String name = null;
+                int id = 0;
+                String job = null;
+                String org_name = null;
+                while (memberFileScanner.hasNextLine()) {
+                    String line = memberFileScanner.nextLine();
+                    if (line.startsWith("Name: ")){
+                        name = line.substring(6);
+                    }
+                    else if (line.startsWith("Customer ID: ")){
+                        id = Integer.parseInt(line.substring(13));
+                    }
+                    else if (line.startsWith("Job: ")){
+                        job = line.substring(5);
+                    }
+                    else if (line.startsWith("Organization Name: ")){
+                        org_name = line.substring(19);
+                    }
+                    else if(line.contains("---")){
+                        external_members.add(new External_Member(name, id, job, org_name));
+                    }
+                }
+                memberFileScanner.close();
+
+            }
+            catch(Exception e){
+                System.out.println("Cannot load members file");
+            }
+        }
+
+        if (movieFile.exists()) {
+            try{
+                Scanner movieFileScanner = new Scanner(movieFile);
+
+                while (movieFileScanner.hasNextLine()) {
+                    String line = movieFileScanner.nextLine();
+                    String[] movieDetails = line.split(" - Movie ID: ");
+                    if (movieDetails.length == 2) {
+                        String movieName = movieDetails[0];
+                        int movieID = Integer.parseInt(movieDetails[1]); //convert to int
+                        Movies movie = new Movies(movieID, movieName);
+                        movies.add(movie);
+                    }
+                    }
+                movieFileScanner.close();
+
+            }
+            catch (Exception e){
+                System.out.println("Cannot load movies file");
+            }
+        }
+
         System.out.println("MOVIE RENTAL SYSTEM:");
         while (true) {
             System.out.print("\n1. Add Student\n2. Add External Member\n3. Add a movie\n4. List all Students\n5. List all External Members\n6. List Movies\n7. Rent a movie\n8. Return a movie\n9. Exit\n> ");
             int choice = input.nextInt();
             switch (choice) {
-                case 1:
+
+                case 1: //Add Student
                     boolean flag = false;
 
-                            System.out.print("Enter student's name\n> ");
-                            String name = input.next();
-                            while (!flag) {
-                                try {
+                    System.out.print("Enter student's name\n> ");
+                    String name = input.next();
+                    while (!flag) {
+                        try {
                             System.out.print("Enter Student ID\n> ");
                             int customerID = input.nextInt();
                             if (students.stream().anyMatch(s -> s.customerID == customerID)) { //verify if ID is already taken
@@ -201,25 +293,26 @@ public class Main {
                             System.out.println("Student added.");
                             flag = true;
 
-                                } catch (Exception e){
-                                System.out.println(e.getMessage());
-                            }
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
                     }
                     break;
-                case 2:
+
+                case 2: //Add External Member
                     boolean flag2 = false;
 
 
-                            System.out.print("Enter member's name\n> ");
-                            String client_name = input.next();
-                            while (!flag2) {
-                                try {
+                    System.out.print("Enter member's name\n> ");
+                    String client_name = input.next();
+                    while (!flag2) {
+                        try {
                             System.out.print("Enter member's ID\n> ");
                             int client_id = input.nextInt();
                             if (external_members.stream().anyMatch(e -> e.customerID == client_id)) {
                                 throw new Exception("Member with that ID already exists. Please try again.");
                             }
-                            System.out.println("Enter member's job\n>");
+                            System.out.print("Enter member's job\n> ");
                             String client_job = input.next();
                             System.out.print("Enter member's organization name\n> ");
                             String client_org_name = input.next();
@@ -227,17 +320,19 @@ public class Main {
                             external_members.add(external_member);
                             System.out.println("Regular member added.");
                             flag2 = true;
+
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
                     }
                     break;
-                case 3:
+
+                case 3: //Add a movie
                     boolean flag3 = false;
-                        input.nextLine();
-                        System.out.print("Enter the movie name that you want to add\n> ");
-                        String movieAddName = input.nextLine();
-                        while (!flag3) {
+                    input.nextLine();
+                    System.out.print("Enter the movie name that you want to add\n> ");
+                    String movieAddName = input.nextLine();
+                    while (!flag3) {
                         try {
                             System.out.print("Enter the movie ID\n> ");
                             int movie_id = input.nextInt();
@@ -256,7 +351,7 @@ public class Main {
                     }
                     break;
 
-                case 4:
+                case 4: //List all Students
                     for (Student s : students) {
                         System.out.println("\n--- Student " + (students.indexOf(s) + 1) + " Details ---");
                         s.Info();
@@ -265,7 +360,7 @@ public class Main {
                         System.out.println("No students added.");
                     }
                     break;
-                case 5:
+                case 5: //List all External Members
                     for (External_Member e : external_members) {
                         System.out.println("\n--- Member " + (external_members.indexOf(e) + 1) + " Details ---");
                         e.Info();
@@ -274,7 +369,7 @@ public class Main {
                         System.out.println("No regular members added.");
                     }
                     break;
-                case 6:
+                case 6: //List Movies
                     System.out.println("\n--- Movie List ---");
                     System.out.printf("%-30s  %-12s  %-15s%n", "Movie Name", "Movie ID", "Status");
                     System.out.println("---------------------------------------------------------------");
@@ -283,10 +378,10 @@ public class Main {
                     }
                     System.out.println("---------------------------------------------------------------\n");
                     break;
-                case 7:
-                    Person renter = null; 
+                case 7: //Rent a movie
+                    Person renter = null;
                     Movies movieToRent = null;
-                    int nights = 0; 
+                    int nights = 0;
                     while (renter == null) {
                         try {
                             System.out.print("Student or regular member rent? (Type 'Student' or 'Member')\n> ");
@@ -310,9 +405,10 @@ public class Main {
                                 }
                             } else if (choice2.equalsIgnoreCase("Member")) {
                                 for (External_Member e : external_members) {
+                                    System.out.println("\n--- Member " + (external_members.indexOf(e) + 1) + " Details ---");
                                     e.Info();
                                 }
-                               
+
                                 System.out.print("Enter member's ID\n> ");
                                 int clientID = input.nextInt();
                                 for (External_Member e : external_members) {
@@ -343,19 +439,20 @@ public class Main {
                             String movie_name = input.nextLine();
 
                             for (Movies m : movies) {
-                                if (m.name.equalsIgnoreCase(movie_name)) {
+                                if (m.name.toLowerCase().contains(movie_name.toLowerCase())) {
                                     movieToRent = m;
                                     break;
                                 }
                             }
                             if (movieToRent == null) {
-                                System.out.println("Movie not found. Please try again.");
+                                throw new Exception("Movie not found. Press 'Enter' to try again.");
                             } else if (!movieToRent.getAvailability()) {
-                                System.out.println("Sorry, this movie is currently unavailable. Please select another movie.");
-                                movieToRent = null;
+                                throw new Exception("Sorry, this movie is currently unavailable. Press 'Enter' to select another movie.");
                             }
+
                         } catch (Exception e) {
-                            System.out.println("An error occurred. Please try again.");
+                            System.out.println(e.getMessage());
+                            movieToRent = null;
                         }
                     }
 
@@ -376,45 +473,71 @@ public class Main {
                     movie_rentals.add(rental);
                     movieToRent.setAvailability(false);
                     rental.Info(false); // this only to not show the fee just yet
-                     System.out.println("Movie rented successfully.");
+                    System.out.println("Movie rented successfully.");
 
                     break;
-                case 8:
+                case 8: //Return a movie
                     System.out.print("Was the renter a Student or a regular member? (Type 'Student' or 'Member')\n> ");
                     String inputRenterType = input.next();
                     ArrayList<Person> rentersList;
 
                     if (inputRenterType.equalsIgnoreCase("Student")) {
                         rentersList = new ArrayList<>(students);
+                        System.out.println("\n--- Student List ---");
+                        System.out.printf("%-20s %-12s%n", "Name", "Customer ID");
+                        System.out.println("-------------------------------------");
+                        for (Person p : rentersList) {
+                            System.out.printf("%-20s %-12d%n", p.name, p.customerID);
+                        }
                     } else if (inputRenterType.equalsIgnoreCase("Member")) {
                         rentersList = new ArrayList<>(external_members);
+                        System.out.println("\n--- Member List ---");
+                        System.out.printf("%-20s %-12s%n", "Name", "Customer ID");
+                        System.out.println("-------------------------------------");
+                        for (Person p : rentersList) {
+                            System.out.printf("%-20s %-12d%n", p.name, p.customerID);
+                        }
                     } else {
                         System.out.println("Invalid input. Please type 'Student' or 'Member'.");
-                        break; // Exit
+                        break;
+                    }
+                    System.out.println("-------------------------------------");
+
+                    System.out.print("Enter the renter's Customer ID\n> ");
+                    int renterId = input.nextInt();
+                    Person selectedRenter = null;
+                    for (Person p : rentersList) {
+                        if (p.customerID == renterId) {
+                            selectedRenter = p;
+                            break;
+                        }
                     }
 
-                    System.out.println("\n--- Movies Currently Rented by " + inputRenterType + " ---");
-                    /** must add here who rented what */
-                    System.out.printf("%-30s  %-12s%n", "Movie Name", "Movie ID");
-                    System.out.println("-----------------------------------------------");
+                    if (selectedRenter == null) {
+                        System.out.println("Renter with that ID not found.");
+                      break;
+                    }
 
                     ArrayList<MovieRental> validRentals = new ArrayList<>();
                     for (MovieRental rental1 : movie_rentals) {
-                        for (Person renterPerson : rentersList) {
-                            if (rental1.customerID == renterPerson.customerID && !rental1.rentable) {
-                                validRentals.add(rental1);
-                                for (Movies movie : movies) {
-                                    if (Integer.parseInt(movie.getMovieID()) == rental1.movieID) {
-                                        movie.showWithoutStatus();
-                                    }
-                                }
-                            }
+                        if (rental1.customerID == selectedRenter.customerID && !rental1.rentable) {
+                            validRentals.add(rental1);
                         }
                     }
 
                     if (validRentals.isEmpty()) {
-                        System.out.println("No movies are currently rented by this renter type.");
-                        break; // Exit
+                        System.out.println("This renter has no movies currently rented.");
+                        break;
+                    }
+                    System.out.println("\n" + selectedRenter.name + " has currently rented " + validRentals.size() + " movie(s):");
+                    System.out.printf("%-30s  %-12s%n", "Movie Name", "Movie ID");
+                    System.out.println("-----------------------------------------------");
+                    for (MovieRental rental1 : validRentals) {
+                        for (Movies movie : movies) {
+                            if (Integer.parseInt(movie.getMovieID()) == rental1.movieID) {
+                                movie.showWithoutStatus();
+                            }
+                        }
                     }
                     System.out.println("-----------------------------------------------");
 
@@ -426,14 +549,14 @@ public class Main {
 
                         for (MovieRental rental2 : validRentals) {
                             for (Movies movie : movies) {
-                                if (movie.name.equalsIgnoreCase(movie_name_return) &&
+                                if (movie.name.toLowerCase().contains(movie_name_return.toLowerCase()) &&
                                         Integer.parseInt(movie.getMovieID()) == rental2.movieID &&
                                         !rental2.rentable) {
 
-                                    rental2.rentable = true; // returned
-                                    movie.setAvailability(true); // is available again
+                                    rental2.rentable = true;
+                                    movie.setAvailability(true);     // movie becomes available again
                                     System.out.println("Movie '" + movie.name + "' has been successfully returned.");
-                                    rental2.Info(true); // shows fee
+                                    rental2.Info(true);  // NOW it shows fee
                                     isReturned = true;
                                     break;
                                 }
@@ -446,9 +569,31 @@ public class Main {
                         }
                     }
                     break;
-                case 9:
+                case 9: //Exit
                     System.out.println("Logging out...");
+                    try {
+                        FileWriter studentWriter = new FileWriter(studentFile);
+                        FileWriter memberWriter = new FileWriter(memberFile);
+                        FileWriter movieWriter = new FileWriter(movieFile);
+                        for (Student s : students) {
+                            studentWriter.write(s.toString() + "\n---\n");
+                        }
+                        studentWriter.close();
+                        for (External_Member e : external_members) {
+                            memberWriter.write(e.toString() + "\n---\n");
+                        }
+                        memberWriter.close();
+                        for (Movies m : movies) {
+                            movieWriter.write(m.toString() + "\n---\n");
+                        }
+                        movieWriter.close();
+                        System.out.println("Files saved.");
+                    }
+                    catch (IOException e) {
+                        System.out.println("Error saving files");
+                    }
                     System.exit(0);
+
                 default:
                     System.out.println("Invalid choice! Try again.\n");
                     break;
