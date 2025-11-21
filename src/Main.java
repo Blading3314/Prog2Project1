@@ -1,172 +1,21 @@
 import java.util.*;
 import java.io.*;
-
-class MovieRental implements Payment {
-    int customerID;
-    String membership;
-    int movieID;
-    int nights_rented;
-    boolean rentable;
-
-    MovieRental(int customerID, String membership, int movieID, int nights_rented, boolean rentable) {
-        this.customerID = customerID;
-        this.membership = membership;
-        this.movieID = movieID;
-        this.nights_rented = nights_rented;
-        this.rentable = rentable;
-    }
-    public String getMovieStatus() {
-        return this.rentable ? "Available" : "Rented";
-    }
-    public void Info(boolean showFee) {
-        System.out.println("\n--- Movie Rental Information ---");
-        System.out.printf("Customer ID     : %d%n", this.customerID);
-        System.out.printf("Movie ID        : %d%n", this.movieID);
-        System.out.printf("Nights Rented   : %d%n", this.nights_rented);
-        System.out.printf("Status          : %s%n", getMovieStatus());
-        if (showFee) {
-            System.out.printf("Rental Fee      : $%.2f%n", calculate());
-        }
-        System.out.println("---------------------------------");
-    }
-
-    @Override
-    public double calculate() {
-        int additionalNights = 0;
-        if (this.nights_rented > 7) {
-            additionalNights = this.nights_rented - 7; // extra fees verifier
-        }
-        if (this.membership.equalsIgnoreCase("Student")) {
-            return STUDENT_FEE + (additionalNights);  // $1 per extra night for students
-        } else {
-            return EXTERNAL_MEMBER_FEE + (additionalNights * 2); // $2 per extra night for members
-        }
-
-    }
-}
-abstract class Person {
-    String name;
-    int customerID;
-    String membership;
-
-    Person(String name, int customerID) {
-        this.name = name;
-        this.customerID = customerID;
-    }
-
-    public String toString() {
-        return "Name: " + this.name + "\nCustomer ID: " + this.customerID + "\nMembership: " + this.membership;
-    }
-    abstract public void Info();
-
-}
-
-class Student extends Person {
-    String schoolName;
-    int grade;
-    Student(String name, int customerID, String schoolName, int grade) {
-        super(name, customerID);
-        this.grade = grade;
-        this.membership = "Student";
-        this.schoolName = schoolName;
-    }
-
-    public void Info() {
-        System.out.printf("Name        : %s%n", this.name);
-        System.out.printf("Customer ID : %d%n", this.customerID);
-        System.out.printf("Membership  : %s%n", this.membership);
-        System.out.printf("School Name : %s%n", this.schoolName);
-        System.out.printf("Grade       : %d%n", this.grade);
-        System.out.println("--------------------------\n");
-    }
-
-    public String toString() {
-        return super.toString() + "\nGrade: " + this.grade + "\nSchool Name: " + this.schoolName;
-    }
-}
-class External_Member extends Person {
-    String job;
-    String org_name;
-    External_Member(String name, int customerID, String job, String org_name) {
-        super(name, customerID);
-        this.name = name;
-        this.customerID = customerID;
-        this.membership = "Regular";
-        this.job = job;
-        this.org_name = org_name;
-    }
-
-    public void Info() {
-        System.out.printf("Name         : %s%n", this.name);
-        System.out.printf("Customer ID  : %d%n", this.customerID);
-        System.out.printf("Membership   : %s%n", this.membership);
-        System.out.printf("Job          : %s%n", this.job);
-        System.out.printf("Organization : %s%n", this.org_name);
-        System.out.println("---------------------------------\n");
-    }
-    public String toString() {
-        return super.toString() + "\nJob: " + this.job + "\nOrganization Name: " + this.org_name;
-    }
-
-}
-
-interface Payment {
-    double STUDENT_FEE = 5.0;
-    double EXTERNAL_MEMBER_FEE = 10.0;
-    double calculate();
-
-}
-class Movies {
-    int movieID;
-    String name;
-    boolean isAvailable;
-
-    Movies(int movieID, String name) {
-        this.movieID = movieID;
-        this.name = name;
-        this.isAvailable = true;
-    }
-
-    public String getMovieID() {
-        return String.valueOf(this.movieID);
-    }
-
-    public void show() {
-        String availability = isAvailable ? "Available" : "Unavailable";
-    // Printing a string, left aligned and takes up 30, 12 and 15 characters.
-        System.out.printf("%-30s  %-12d  %-15s%n", this.name, this.movieID, availability);
-    }
-
-    public void showWithoutStatus() {
-        // this is only to show print details without the status
-        System.out.printf(" %-25s  %-10d %n", this.name, this.movieID);
-    }
-
-    public void setAvailability(boolean availability) {
-        this.isAvailable = availability;
-    }
-
-    public boolean getAvailability() {
-        return this.isAvailable;
-    }
-    public String toString() {
-        return this.name + " - Movie ID: " + this.movieID;
-    }
-
-}
+import java.time.LocalDate;
+/** This is the main class of the movie rental system. This is where the program will run.*/
 public class Main {
     public static void main(String[] args) {
 
         File studentFile = new File("Students.txt");
         File memberFile = new File("Members.txt");
         File movieFile = new File("Movies.txt");
+        File rentalFile = new File("Rentals.txt");
         Scanner input = new Scanner(System.in);
 
-        ArrayList<Movies> movies = new ArrayList<>();
+        ArrayList<Movie> movies = new ArrayList<>();
 
         ArrayList<Student> students = new ArrayList<>();
 
-        ArrayList<External_Member> external_members = new ArrayList<>();
+        ArrayList<ExternalMember> external_members = new ArrayList<>();
 
         ArrayList<MovieRental> movie_rentals = new ArrayList<>();
 
@@ -207,7 +56,7 @@ public class Main {
                 studentFileScanner.close();
 
             } catch (Exception e) {
-                System.out.println("Cannot load students file");
+                System.out.println("No recent students file found.");
             }
         }
         // almost the same logic as students
@@ -233,36 +82,86 @@ public class Main {
                         org_name = line.substring(19);
                     }
                     else if(line.contains("---")){
-                        external_members.add(new External_Member(name, id, job, org_name));
+                        external_members.add(new ExternalMember(name, id, job, org_name));
                     }
                 }
                 memberFileScanner.close();
 
             }
             catch(Exception e){
-                System.out.println("Cannot load members file");
+                System.out.println("No recent members file found.");
             }
         }
 
         if (movieFile.exists()) {
-            try{
+            try {
                 Scanner movieFileScanner = new Scanner(movieFile);
-
+                String movieName;
+                int movieID;
                 while (movieFileScanner.hasNextLine()) {
                     String line = movieFileScanner.nextLine();
-                    String[] movieDetails = line.split(" - Movie ID: ");
-                    if (movieDetails.length == 2) {
-                        String movieName = movieDetails[0];
-                        int movieID = Integer.parseInt(movieDetails[1]); //convert to int
-                        Movies movie = new Movies(movieID, movieName);
-                        movies.add(movie);
-                    }
-                    }
-                movieFileScanner.close();
 
+                    if (line.startsWith("---") || line.isEmpty()) {
+                        continue;
+                    }
+                    String[] parts = line.split(" - Movie ID: ");
+                    if (parts.length == 2) {
+                        movieName = parts[0].trim();
+                        String[] idAndStatus = parts[1].split(" - Status: ");
+                        movieID = Integer.parseInt(idAndStatus[0].trim());
+                        Movie m = new Movie(movieID, movieName);
+                        movies.add(m);
+                    }
+                }
+                movieFileScanner.close();
+            } catch (Exception e) {
+                System.out.println("No recent movies file found.");
             }
-            catch (Exception e){
-                System.out.println("Cannot load movies file");
+        }
+
+        if (rentalFile.exists()) {
+            try {
+                Scanner rentalFileScanner = new Scanner(rentalFile);
+
+                int customerID = 0, mID = 0, nights = 0;
+                String membership = "";
+                LocalDate beginD = null, returnD = null;
+                boolean rentableFlag = true;
+
+                while (rentalFileScanner.hasNextLine()) {
+                    String line = rentalFileScanner.nextLine();
+
+                    if (line.startsWith("Customer ID: "))
+                        customerID = Integer.parseInt(line.substring(13));
+                    else if (line.startsWith("Membership: "))
+                        membership = line.substring(12);
+                    else if (line.startsWith("Movie ID: "))
+                        mID = Integer.parseInt(line.substring(10));
+                    else if (line.startsWith("Nights Rented: "))
+                        nights = Integer.parseInt(line.substring(15));
+                    else if (line.startsWith("Begin Date: "))
+                        beginD = LocalDate.parse(line.substring(12));
+                    else if (line.startsWith("Return Date: "))
+                        returnD = LocalDate.parse(line.substring(13));
+                    else if (line.startsWith("Status: "))
+                        rentableFlag = line.substring(8).equals("Available");
+                    else if (line.startsWith("---")) {
+
+                        MovieRental r = new MovieRental(customerID, membership, mID, nights, rentableFlag);
+                        r.beginDate = beginD;
+                        r.returnDate = returnD;
+                        // If the user opens the program after the date expected to return,
+                        // the isAfter() method will automatically return the movie.
+                        if (LocalDate.now().isAfter(returnD)) {
+                            r.rentable = true;
+                        }
+
+                        movie_rentals.add(r);
+                    }
+                }
+                rentalFileScanner.close();
+            } catch (Exception e) {
+                System.out.println("No recent rentals file found.");
             }
         }
 
@@ -274,9 +173,9 @@ public class Main {
 
                 case 1: //Add Student
                     boolean flag = false;
-
+                    input.nextLine();
                     System.out.print("Enter student's name\n> ");
-                    String name = input.next();
+                    String name = input.nextLine();
                     while (!flag) {
                         try {
                             System.out.print("Enter Student ID\n> ");
@@ -301,10 +200,9 @@ public class Main {
 
                 case 2: //Add External Member
                     boolean flag2 = false;
-
-
+                    input.nextLine();
                     System.out.print("Enter member's name\n> ");
-                    String client_name = input.next();
+                    String client_name = input.nextLine();
                     while (!flag2) {
                         try {
                             System.out.print("Enter member's ID\n> ");
@@ -316,7 +214,7 @@ public class Main {
                             String client_job = input.next();
                             System.out.print("Enter member's organization name\n> ");
                             String client_org_name = input.next();
-                            External_Member external_member = new External_Member(client_name, client_id, client_job, client_org_name);
+                            ExternalMember external_member = new ExternalMember(client_name, client_id, client_job, client_org_name);
                             external_members.add(external_member);
                             System.out.println("Regular member added.");
                             flag2 = true;
@@ -330,17 +228,21 @@ public class Main {
                 case 3: //Add a movie
                     boolean flag3 = false;
                     input.nextLine();
-                    System.out.print("Enter the movie name that you want to add\n> ");
-                    String movieAddName = input.nextLine();
+
                     while (!flag3) {
                         try {
+                            System.out.print("Enter the movie name that you want to add\n> ");
+                            String movieAddName = input.nextLine();
+                            if (movies.stream().anyMatch(m -> m.name.equalsIgnoreCase(movieAddName))) {
+                                throw new Exception("Movie with that name already exists. Please try again.");
+                            }
                             System.out.print("Enter the movie ID\n> ");
                             int movie_id = input.nextInt();
                             // check if the movie ID already exists in the list
                             if (movies.stream().anyMatch(m -> m.getMovieID().equals(String.valueOf(movie_id)))) {
                                 throw new Exception("Movie with that ID already exists. Please try again.");
                             } else {
-                                Movies movie = new Movies(movie_id, movieAddName);
+                                Movie movie = new Movie(movie_id, movieAddName);
                                 movies.add(movie);
                                 System.out.println("Movie added.");
                                 flag3 = true;
@@ -361,7 +263,7 @@ public class Main {
                     }
                     break;
                 case 5: //List all External Members
-                    for (External_Member e : external_members) {
+                    for (ExternalMember e : external_members) {
                         System.out.println("\n--- Member " + (external_members.indexOf(e) + 1) + " Details ---");
                         e.Info();
                     }
@@ -370,20 +272,38 @@ public class Main {
                     }
                     break;
                 case 6: //List Movies
-                    System.out.println("\n--- Movie List ---");
-                    System.out.printf("%-30s  %-12s  %-15s%n", "Movie Name", "Movie ID", "Status");
-                    System.out.println("---------------------------------------------------------------");
-                    for (Movies m : movies) {
-                        m.show(); // Prints movies with availability details
+                    if (movies.isEmpty()) {
+                        System.out.println("No movies added.");
+                        break;
                     }
-                    System.out.println("---------------------------------------------------------------\n");
+                    else {
+                        System.out.println("\n--- Movie List ---");
+                        System.out.printf("%-30s  %-12s  %-15s%n", "Movie Name", "Movie ID", "Status");
+                        System.out.println("---------------------------------------------------------------");
+                        for (Movie m : movies) {
+                            boolean available = isAvailable(m.movieID, movie_rentals);
+                            m.show(available); // Prints movies with availability details
+                        }
+                        System.out.println("---------------------------------------------------------------\n");
+                    }
                     break;
                 case 7: //Rent a movie
+                    if (movies.isEmpty()) {
+                        System.out.println("No movies added.");
+                        break;
+                    }
+                    else if (movie_rentals.stream().anyMatch(r -> r.rentable)) {
+                        System.out.println("Sorry, there are no movies available right now. Please try again later.");
+                        break;
+                    }
                     Person renter = null;
-                    Movies movieToRent = null;
+                    Movie movieToRent = null;
                     int nights = 0;
                     while (renter == null) {
                         try {
+                            if (students.isEmpty() && external_members.isEmpty()) {
+                                throw new Exception("No students or regular members added. Add a student or regular member before renting a movie.");
+                            }
                             System.out.print("Student or regular member rent? (Type 'Student' or 'Member')\n> ");
                             String choice2 = input.next();
                             if (choice2.equalsIgnoreCase("Student")) {
@@ -404,14 +324,14 @@ public class Main {
                                     System.out.println("Student not found. Please try again.");
                                 }
                             } else if (choice2.equalsIgnoreCase("Member")) {
-                                for (External_Member e : external_members) {
+                                for (ExternalMember e : external_members) {
                                     System.out.println("\n--- Member " + (external_members.indexOf(e) + 1) + " Details ---");
                                     e.Info();
                                 }
 
                                 System.out.print("Enter member's ID\n> ");
                                 int clientID = input.nextInt();
-                                for (External_Member e : external_members) {
+                                for (ExternalMember e : external_members) {
                                     if (e.customerID == clientID) {
                                         renter = e;
                                         break;
@@ -430,15 +350,19 @@ public class Main {
 
                     while (movieToRent == null) {
                         try {
-                            System.out.println("\nAvailable Movies:");
-                            for (Movies m : movies) {
-                                m.show();
+                            System.out.println("\n--- Available Movies ---");
+                            System.out.printf("%-30s %-12s %-12s%n", "Movie Name", "Movie ID", "Status");
+                            System.out.println("-------------------------------------------------------------");
+                            for (Movie m : movies) {
+                                boolean available = isAvailable(m.movieID, movie_rentals);
+                                m.show(available);
                             }
+                            System.out.println("-------------------------------------------------------------");
                             input.nextLine();
                             System.out.print("Enter movie name to rent\n> ");
                             String movie_name = input.nextLine();
 
-                            for (Movies m : movies) {
+                            for (Movie m : movies) {
                                 if (m.name.toLowerCase().contains(movie_name.toLowerCase())) {
                                     movieToRent = m;
                                     break;
@@ -446,8 +370,8 @@ public class Main {
                             }
                             if (movieToRent == null) {
                                 throw new Exception("Movie not found. Press 'Enter' to try again.");
-                            } else if (!movieToRent.getAvailability()) {
-                                throw new Exception("Sorry, this movie is currently unavailable. Press 'Enter' to select another movie.");
+                            } else if (!isAvailable(movieToRent.movieID, movie_rentals)) {
+                                throw new Exception("Sorry, this movie is currently rented. Press 'Enter' to select another movie.");
                             }
 
                         } catch (Exception e) {
@@ -458,6 +382,7 @@ public class Main {
 
                     while (nights <= 0) {
                         try {
+                            System.out.println("Began rental on: " + java.time.LocalDate.now());
                             System.out.print("Enter number of nights rented\n> ");
                             nights = input.nextInt();
                             if (nights <= 0) {
@@ -471,41 +396,69 @@ public class Main {
                     String membershipType = renter.membership;
                     MovieRental rental = new MovieRental(renter.customerID, membershipType, Integer.parseInt(movieToRent.getMovieID()), nights, false);
                     movie_rentals.add(rental);
-                    movieToRent.setAvailability(false);
                     rental.Info(false); // this only to not show the fee just yet
                     System.out.println("Movie rented successfully.");
 
                     break;
-                case 8: //Return a movie
+                case 8: // Return a movie
+                    if (movie_rentals.isEmpty()) {
+                        System.out.println("Nobody rented movies.");
+                        break;
+                    }
+                    else if (students.isEmpty() && external_members.isEmpty()) {
+                        System.out.println("No students or regular members added. Add a student or regular member before renting a movie.");
+                        break;
+                    }
+
                     System.out.print("Was the renter a Student or a regular member? (Type 'Student' or 'Member')\n> ");
                     String inputRenterType = input.next();
-                    ArrayList<Person> rentersList;
 
+                    ArrayList<Person> rentersList = new ArrayList<>();
                     if (inputRenterType.equalsIgnoreCase("Student")) {
-                        rentersList = new ArrayList<>(students);
-                        System.out.println("\n--- Student List ---");
-                        System.out.printf("%-20s %-12s%n", "Name", "Customer ID");
-                        System.out.println("-------------------------------------");
-                        for (Person p : rentersList) {
-                            System.out.printf("%-20s %-12d%n", p.name, p.customerID);
+
+                        for (Student s : students) {
+                            for (MovieRental r : movie_rentals) {
+                                if (r.customerID == s.customerID && !r.rentable) {
+                                    rentersList.add(s);
+                                    break;
+                                }
+                            }
                         }
-                    } else if (inputRenterType.equalsIgnoreCase("Member")) {
-                        rentersList = new ArrayList<>(external_members);
-                        System.out.println("\n--- Member List ---");
-                        System.out.printf("%-20s %-12s%n", "Name", "Customer ID");
-                        System.out.println("-------------------------------------");
-                        for (Person p : rentersList) {
-                            System.out.printf("%-20s %-12d%n", p.name, p.customerID);
+
+                    }
+                    else if (inputRenterType.equalsIgnoreCase("Member")) {
+                        for (ExternalMember m : external_members) {
+                            for (MovieRental r : movie_rentals) {
+                                if (r.customerID == m.customerID && !r.rentable) {
+                                    rentersList.add(m);
+                                    break;
+                                }
+                            }
                         }
-                    } else {
+
+                    }
+                    else {
                         System.out.println("Invalid input. Please type 'Student' or 'Member'.");
                         break;
+                    }
+
+                    if (rentersList.isEmpty()) {
+                        System.out.println("No renters of this type currently have movies.");
+                        break;
+                    }
+
+                    System.out.println("\n--- Renters Who Have Active Rentals ---");
+                    System.out.printf("%-20s %-12s%n", "Name", "Customer ID");
+                    System.out.println("-------------------------------------");
+                    for (Person p : rentersList) {
+                        System.out.printf("%-20s %-12d%n", p.name, p.customerID);
                     }
                     System.out.println("-------------------------------------");
 
                     System.out.print("Enter the renter's Customer ID\n> ");
                     int renterId = input.nextInt();
                     Person selectedRenter = null;
+
                     for (Person p : rentersList) {
                         if (p.customerID == renterId) {
                             selectedRenter = p;
@@ -515,9 +468,8 @@ public class Main {
 
                     if (selectedRenter == null) {
                         System.out.println("Renter with that ID not found.");
-                      break;
+                        break;
                     }
-
                     ArrayList<MovieRental> validRentals = new ArrayList<>();
                     for (MovieRental rental1 : movie_rentals) {
                         if (rental1.customerID == selectedRenter.customerID && !rental1.rentable) {
@@ -529,11 +481,12 @@ public class Main {
                         System.out.println("This renter has no movies currently rented.");
                         break;
                     }
+
                     System.out.println("\n" + selectedRenter.name + " has currently rented " + validRentals.size() + " movie(s):");
                     System.out.printf("%-30s  %-12s%n", "Movie Name", "Movie ID");
                     System.out.println("-----------------------------------------------");
                     for (MovieRental rental1 : validRentals) {
-                        for (Movies movie : movies) {
+                        for (Movie movie : movies) {
                             if (Integer.parseInt(movie.getMovieID()) == rental1.movieID) {
                                 movie.showWithoutStatus();
                             }
@@ -542,21 +495,24 @@ public class Main {
                     System.out.println("-----------------------------------------------");
 
                     boolean isReturned = false;
+
                     while (!isReturned) {
                         input.nextLine();
                         System.out.print("Enter the movie name you want to return: ");
                         String movie_name_return = input.nextLine();
 
                         for (MovieRental rental2 : validRentals) {
-                            for (Movies movie : movies) {
+                            for (Movie movie : movies) {
                                 if (movie.name.toLowerCase().contains(movie_name_return.toLowerCase()) &&
                                         Integer.parseInt(movie.getMovieID()) == rental2.movieID &&
                                         !rental2.rentable) {
 
-                                    rental2.rentable = true;
-                                    movie.setAvailability(true);     // movie becomes available again
+                                    validRentals.remove(rental2);
+                                    movie_rentals.remove(rental2);
+
                                     System.out.println("Movie '" + movie.name + "' has been successfully returned.");
-                                    rental2.Info(true);  // NOW it shows fee
+                                    rental2.Info(true); // show fee
+
                                     isReturned = true;
                                     break;
                                 }
@@ -568,25 +524,42 @@ public class Main {
                             System.out.println("The requested movie could not be returned. Press 'Enter' to try again.");
                         }
                     }
+
                     break;
+
                 case 9: //Exit
                     System.out.println("Logging out...");
                     try {
                         FileWriter studentWriter = new FileWriter(studentFile);
                         FileWriter memberWriter = new FileWriter(memberFile);
                         FileWriter movieWriter = new FileWriter(movieFile);
+                        FileWriter rentalWriter = new FileWriter(rentalFile);
                         for (Student s : students) {
                             studentWriter.write(s.toString() + "\n---\n");
                         }
                         studentWriter.close();
-                        for (External_Member e : external_members) {
+                        for (ExternalMember e : external_members) {
                             memberWriter.write(e.toString() + "\n---\n");
                         }
                         memberWriter.close();
-                        for (Movies m : movies) {
-                            movieWriter.write(m.toString() + "\n---\n");
+                        for (Movie m : movies) {
+                            boolean available = Main.isAvailable(m.movieID, movie_rentals);
+                            movieWriter.write(m.toString(available) + "\n---\n");
                         }
                         movieWriter.close();
+                        for (MovieRental rental1 : movie_rentals) {
+                            rentalWriter.write(
+                                    "Customer ID: " + rental1.customerID + "\n" +
+                                            "Membership: " + rental1.membership + "\n" +
+                                            "Movie ID: " + rental1.movieID + "\n" +
+                                            "Nights Rented: " + rental1.nights_rented + "\n" +
+                                            "Begin Date: " + rental1.beginDate + "\n" +
+                                            "Return Date: " + rental1.returnDate + "\n" +
+                                            "Status: " + (rental1.rentable ? "Available" : "Rented") + "\n" +
+                                            "---\n"
+                            );
+                        }
+                        rentalWriter.close();
                         System.out.println("Files saved.");
                     }
                     catch (IOException e) {
@@ -600,4 +573,14 @@ public class Main {
             }
         }
     }
+    /** Helper function to check if a movie is available for rental or not*/
+    private static boolean isAvailable(int movieID, ArrayList<MovieRental> rentals) {
+        for (MovieRental r : rentals) {
+            if (r.movieID == movieID && !r.rentable) {
+                return false; //is rented
+            }
+        }
+        return true; // not rented
+    }
+
 }
