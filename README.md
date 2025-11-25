@@ -1,1 +1,1 @@
-Javadoc for whole project: [file:///Users/tomz/Desktop/package-summary.html](url)
+Javadoc for project: [https://blading3314.github.io/Prog2Project1/](url)
