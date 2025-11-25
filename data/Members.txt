@@ -10,5 +10,3 @@ Membership: Regular
 Job: Teller
 Organization Name: BMO
 ---
-
-
