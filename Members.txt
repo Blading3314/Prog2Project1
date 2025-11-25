@@ -1,1 +1,14 @@
+Name: John Doe
+Customer ID: 48410
+Membership: Regular
+Job: Sales Marketing
+Organization Name: Apple Inc.
+---
+Name: William Smith
+Customer ID: 89712
+Membership: Regular
+Job: Teller
+Organization Name: BMO
+---
+
 
