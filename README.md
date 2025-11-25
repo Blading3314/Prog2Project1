@@ -11,6 +11,7 @@ If you want to **skip the movies adding part**, follow these steps:
 1. Run the program.
 2. Exit using **case 9**.
 3. Add the following movies to `Movies.txt`:
+
 Star Wars - Movie ID: 3003
 
 The Godfather - Movie ID: 4821
