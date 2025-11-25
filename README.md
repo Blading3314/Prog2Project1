@@ -1,4 +1,5 @@
 # Movie Project
+A movie rental application that registers and accepts clients and implements a fee and a movie returnal system.
 
 ## Javadoc
 You can view the Javadoc for this project [here](https://blading3314.github.io/Prog2Project1/)
