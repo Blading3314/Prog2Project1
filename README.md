@@ -1,7 +1,6 @@
-# Movie Project
-A movie rental application that registers and accepts clients and implements a fee and a movie returnal system.
----
+## Movie Project
 
+A movie rental application that registers and accepts clients and implements a fee and a movie returnal system.
 ## Running the Program
 
 1. Download the project's ZIP file.
