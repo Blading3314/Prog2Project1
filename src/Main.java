@@ -5,10 +5,10 @@ import java.time.LocalDate;
 public class Main {
     public static void main(String[] args) {
 
-        File studentFile = new File("Students.txt");
-        File memberFile = new File("Members.txt");
-        File movieFile = new File("Movies.txt");
-        File rentalFile = new File("Rentals.txt");
+        File studentFile = new File("data/Students.txt");
+        File memberFile = new File("data/Members.txt");
+        File movieFile = new File("data/Movies.txt");
+        File rentalFile = new File("data/Rentals.txt");
         Scanner input = new Scanner(System.in);
 
         ArrayList<Movie> movies = new ArrayList<>();
