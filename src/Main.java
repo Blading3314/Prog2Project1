@@ -237,7 +237,7 @@ public class Main {
                             if (movieAddName.isEmpty()) {
                                 throw new Exception("Movie name cannot be empty. Please try again.");
                             }
-
+                            // verify if movie name is already taken
                             if (movies.stream().anyMatch(m -> m.name.equalsIgnoreCase(movieAddName))) {
                                 throw new Exception("Movie with that name already exists. Please try again.\n");
                             }
@@ -246,6 +246,7 @@ public class Main {
                             int movie_id = input.nextInt();
                             input.nextLine();
 
+                            // verify if movie ID is already taken
                             if (movies.stream().anyMatch(m -> m.getMovieID().equals(String.valueOf(movie_id)))) {
                                 throw new Exception("Movie with that ID already exists. Please try again.\n");
                             }
@@ -301,7 +302,7 @@ public class Main {
                     if (movies.isEmpty()) {
                         System.out.println("No movies added.");
                         break;
-                    }
+                    } // verify if there are any movies available
                     else if (movie_rentals.stream().anyMatch(r -> r.rentable)) {
                         System.out.println("Sorry, there are no movies available right now. Please try again later.");
                         break;
@@ -310,7 +311,7 @@ public class Main {
                     Movie movieToRent = null;
                     int nights = 0;
                     while (renter == null) {
-                        try {
+                        try { // verify if there are students or regular members
                             if (students.isEmpty() && external_members.isEmpty()) {
                                 throw new Exception("No students or regular members added. Add a student or regular member before renting a movie.");
                             }

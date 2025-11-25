@@ -1,0 +1,6 @@
+Name: John Doe
+Customer ID: 6741
+Membership: Regular
+Job: Unemployed
+Organization Name: Home
+---

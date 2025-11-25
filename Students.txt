@@ -1,0 +1,6 @@
+Name: Thomas Castano
+Customer ID: 2470211
+Membership: Student
+Grade: 100
+School Name: Vanier
+---
