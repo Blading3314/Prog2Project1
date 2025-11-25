@@ -1,1 +1,26 @@
+Name: Thomas Castano Perez
+Customer ID: 2470211
+Membership: Student
+Grade: 96
+School Name: Vanier
+---
+Name: Joeffrey Briones
+Customer ID: 2513172
+Membership: Student
+Grade: 80
+School Name: Vanier
+---
+Name: Danush Soosai
+Customer ID: 2429248
+Membership: Student
+Grade: 54
+School Name: Vanier
+---
+Name: Charles David Endaya
+Customer ID: 674120
+Membership: Student
+Grade: 95
+School Name: Vanier
+---
+
 
