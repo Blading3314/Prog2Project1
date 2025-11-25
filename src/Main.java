@@ -225,7 +225,7 @@ public class Main {
                     }
                     break;
 
-                case 3: //Add a movie
+                case 3: // Add a movie
                     boolean flag3 = false;
                     input.nextLine();
 
@@ -233,20 +233,30 @@ public class Main {
                         try {
                             System.out.print("Enter the movie name that you want to add\n> ");
                             String movieAddName = input.nextLine();
-                            if (movies.stream().anyMatch(m -> m.name.equalsIgnoreCase(movieAddName))) {
-                                throw new Exception("Movie with that name already exists. Please try again.");
+
+                            if (movieAddName.isEmpty()) {
+                                throw new Exception("Movie name cannot be empty. Please try again.");
                             }
+
+                            if (movies.stream().anyMatch(m -> m.name.equalsIgnoreCase(movieAddName))) {
+                                throw new Exception("Movie with that name already exists. Please try again.\n");
+                            }
+
                             System.out.print("Enter the movie ID\n> ");
                             int movie_id = input.nextInt();
-                            // check if the movie ID already exists in the list
+                            input.nextLine();
+
                             if (movies.stream().anyMatch(m -> m.getMovieID().equals(String.valueOf(movie_id)))) {
-                                throw new Exception("Movie with that ID already exists. Please try again.");
-                            } else {
-                                Movie movie = new Movie(movie_id, movieAddName);
-                                movies.add(movie);
-                                System.out.println("Movie added.");
-                                flag3 = true;
+                                throw new Exception("Movie with that ID already exists. Please try again.\n");
                             }
+
+                            movies.add(new Movie(movie_id, movieAddName));
+                            System.out.println("Movie added.");
+                            flag3 = true;
+
+                        } catch (InputMismatchException e) {
+                            System.out.println("Invalid ID. Please enter a number.");
+                            input.nextLine();
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
