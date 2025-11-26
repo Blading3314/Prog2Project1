@@ -6,10 +6,10 @@ public class Main {
     public static void main(String[] args) {
         AppStart.main(args);
 
-        File studentFile = new File("data/Students.txt");
-        File memberFile = new File("data/Members.txt");
-        File movieFile = new File("data/Movies.txt");
-        File rentalFile = new File("data/Rentals.txt");
+        File studentFile = new File("Prog2Project1-main\\data\\Students.txt");
+        File memberFile = new File("Prog2Project1-main\\data\\Members.txt");
+        File movieFile = new File("Prog2Project1-main\\data\\Movies.txt");
+        File rentalFile = new File("Prog2Project1-main\\data\\Rentals.txt");
         Scanner input = new Scanner(System.in);
 
         ArrayList<Movie> movies = new ArrayList<>();
