@@ -4,6 +4,7 @@ import java.time.LocalDate;
 /** This is the main class of the movie rental system. This is where the program will run.*/
 public class Main {
     public static void main(String[] args) {
+        AppStart.main(args);
 
         File studentFile = new File("data/Students.txt");
         File memberFile = new File("data/Members.txt");
@@ -593,5 +594,4 @@ public class Main {
         }
         return true; // not rented
     }
-
 }
