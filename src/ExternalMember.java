@@ -1,7 +1,7 @@
 /** A regular client class. This class receives a client's info such as his/her job and organization name. */
 public class ExternalMember extends Person {
     public String job;
-    String org_name;
+    public String org_name;
     public ExternalMember(String name, int customerID, String job, String org_name) {
         super(name, customerID);
         this.name = name;
