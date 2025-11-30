@@ -5,6 +5,8 @@ A movie rental application implementing a system that that allows different type
 ## Running the Program
 1. Download the project's ZIP file.
 2. Run the program under `Main.java`.
+* Side note: don't run the project using GUI or javaFX, it will not work since it's incompletely implemented.
+* Only run the project by console version.
 ---
 
 ## Source Files Location

@@ -1,7 +1,7 @@
 /** Student class. This class receives the student's info such as his/her school name and grade.*/
 public class Student extends Person {
-    String schoolName;
-    int grade;
+    public String schoolName;
+    public int grade;
     Student(String name, int customerID, String schoolName, int grade) {
         super(name, customerID);
         this.grade = grade;

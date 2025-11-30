@@ -1,15 +1,16 @@
+import java.nio.file.Files;
 import java.util.*;
 import java.io.*;
 import java.time.LocalDate;
+import org.json.*;
 /** This is the main class of the movie rental system. This is where the program will run.*/
 public class Main {
     public static void main(String[] args) {
-        AppStart.main(args);
 
-        File studentFile = new File("data/Students.txt");
-        File memberFile = new File("data/Members.txt");
-        File movieFile = new File("data/Movies.txt");
-        File rentalFile = new File("data/Rentals.txt");
+        File studentFile = new File("data/Students.json");
+        File memberFile = new File("data/Members.json");
+        File movieFile = new File("data/Movies.json");
+        File rentalFile = new File("data/Rentals.json");
         Scanner input = new Scanner(System.in);
 
         ArrayList<Movie> movies = new ArrayList<>();
@@ -22,39 +23,26 @@ public class Main {
 
         if (studentFile.exists()) {
             try {
-                Scanner studentFileScanner = new Scanner(studentFile);
+                // read content from file
+                String content = new String(Files.readAllBytes(studentFile.toPath()));
 
-                String name = null;
-                int id = 0;
-                String schoolName = null;
-                int grade = 0;
+                JSONArray jsonArray = new JSONArray(content);
 
-                while (studentFileScanner.hasNextLine()) /* loop until no more lines */{
-                    String line = studentFileScanner.nextLine();
+                for (int i = 0; i < jsonArray.length(); i++) {
 
-                    if (line.startsWith("Name: ")) {
-                        name = line.substring(6); // take name after "Name: (6 characters)"
-                    }
-                    else if (line.startsWith("Customer ID: ")) {
-                        id = Integer.parseInt(line.substring(13));
-                    }
-                    else if (line.startsWith("Membership: ")) {
-                        // skipping, because constructor does it already (this.membership = "Student")
-                    }
-                    else if (line.startsWith("Grade: ")) {
-                        grade = Integer.parseInt(line.substring(7)); //convert to int
-                    }
-                    else if (line.startsWith("School Name: ")) {
-                        schoolName = line.substring(13);
-                    }
-                    else if (line.startsWith("---")) {
-                        /* end of student's info when there's "---"
-                        at the bottom of the line
-                         */
-                        students.add(new Student(name, id, schoolName, grade));
-                    }
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                    String name = jsonObject.getString("name");
+
+                    int id = jsonObject.getInt("id");
+
+                    String schoolName = jsonObject.getString("schoolName");
+
+                    int grade = jsonObject.getInt("grade");
+
+                    Student student = new Student(name, id, schoolName, grade);
+                    students.add(student); // add students
                 }
-                studentFileScanner.close();
 
             } catch (Exception e) {
                 System.out.println("No recent students file found.");
@@ -63,30 +51,19 @@ public class Main {
         // almost the same logic as students
         if (memberFile.exists()) {
             try{
-                Scanner memberFileScanner = new Scanner(memberFile);
-                String name = null;
-                int id = 0;
-                String job = null;
-                String org_name = null;
-                while (memberFileScanner.hasNextLine()) {
-                    String line = memberFileScanner.nextLine();
-                    if (line.startsWith("Name: ")){
-                        name = line.substring(6);
-                    }
-                    else if (line.startsWith("Customer ID: ")){
-                        id = Integer.parseInt(line.substring(13));
-                    }
-                    else if (line.startsWith("Job: ")){
-                        job = line.substring(5);
-                    }
-                    else if (line.startsWith("Organization Name: ")){
-                        org_name = line.substring(19);
-                    }
-                    else if(line.contains("---")){
-                        external_members.add(new ExternalMember(name, id, job, org_name));
-                    }
+                // read content from file
+                String content = new String(Files.readAllBytes(memberFile.toPath()));
+
+                JSONArray jsonArray = new JSONArray(content);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    String name = jsonObject.getString("name");
+                    int id = jsonObject.getInt("id");
+                    String job = jsonObject.getString("job");
+                    String orgName = jsonObject.getString("orgName");
+                    ExternalMember externalMember = new ExternalMember(name, id, job, orgName);
+                    external_members.add(externalMember);
                 }
-                memberFileScanner.close();
 
             }
             catch(Exception e){
@@ -96,25 +73,20 @@ public class Main {
 
         if (movieFile.exists()) {
             try {
-                Scanner movieFileScanner = new Scanner(movieFile);
-                String movieName;
-                int movieID;
-                while (movieFileScanner.hasNextLine()) {
-                    String line = movieFileScanner.nextLine();
+                // read content from file
+                String content = new String(Files.readAllBytes(movieFile.toPath()));
 
-                    if (line.startsWith("---") || line.isEmpty()) {
-                        continue;
-                    }
-                    String[] parts = line.split(" - Movie ID: ");
-                    if (parts.length == 2) {
-                        movieName = parts[0].trim();
-                        String[] idAndStatus = parts[1].split(" - Status: ");
-                        movieID = Integer.parseInt(idAndStatus[0].trim());
-                        Movie m = new Movie(movieID, movieName);
-                        movies.add(m);
-                    }
+                JSONArray jsonArray = new JSONArray(content);
+                for (int i = 0; i < jsonArray.length(); i++) {
+
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                    String movieName = jsonObject.getString("name");
+                    int movieID = jsonObject.getInt("id");
+                    Movie movie = new Movie(movieID, movieName);
+
+                    movies.add(movie);
                 }
-                movieFileScanner.close();
             } catch (Exception e) {
                 System.out.println("No recent movies file found.");
             }
@@ -122,49 +94,46 @@ public class Main {
 
         if (rentalFile.exists()) {
             try {
-                Scanner rentalFileScanner = new Scanner(rentalFile);
+                String content = new String(Files.readAllBytes(rentalFile.toPath()));
+                JSONArray jsonArray = new JSONArray(content);
 
-                int customerID = 0, mID = 0, nights = 0;
-                String membership = "";
-                LocalDate beginD = null, returnD = null;
-                boolean rentableFlag = true;
+                for (int i = 0; i < jsonArray.length(); i++) {
 
-                while (rentalFileScanner.hasNextLine()) {
-                    String line = rentalFileScanner.nextLine();
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                    if (line.startsWith("Customer ID: "))
-                        customerID = Integer.parseInt(line.substring(13));
-                    else if (line.startsWith("Membership: "))
-                        membership = line.substring(12);
-                    else if (line.startsWith("Movie ID: "))
-                        mID = Integer.parseInt(line.substring(10));
-                    else if (line.startsWith("Nights Rented: "))
-                        nights = Integer.parseInt(line.substring(15));
-                    else if (line.startsWith("Begin Date: "))
-                        beginD = LocalDate.parse(line.substring(12));
-                    else if (line.startsWith("Return Date: "))
-                        returnD = LocalDate.parse(line.substring(13));
-                    else if (line.startsWith("Status: "))
-                        rentableFlag = line.substring(8).equals("Available");
-                    else if (line.startsWith("---")) {
+                    int customerID = jsonObject.getInt("customerID");
+                    String membershipType = jsonObject.getString("membershipType");
+                    int movieID = jsonObject.getInt("movieID");
+                    int nights = jsonObject.getInt("nights");
+                    boolean rentable = jsonObject.getBoolean("rentable");
 
-                        MovieRental r = new MovieRental(customerID, membership, mID, nights, rentableFlag);
-                        r.beginDate = beginD;
-                        r.returnDate = returnD;
-                        // If the user opens the program after the date expected to return,
-                        // the isAfter() method will automatically return the movie.
-                        if (LocalDate.now().isAfter(returnD)) {
-                            r.rentable = true;
-                        }
-
-                        movie_rentals.add(r);
+                    LocalDate beginD = null;
+                    LocalDate returnD = null;
+                    if (!jsonObject.isNull("beginDate")) {
+                        beginD = LocalDate.parse(jsonObject.getString("beginDate"));
                     }
+                    if (!jsonObject.isNull("returnDate")) {
+                        returnD = LocalDate.parse(jsonObject.getString("returnDate"));
+                    }
+
+                    MovieRental r = new MovieRental(customerID, membershipType, movieID, nights, rentable);
+                    r.beginDate = beginD;
+                    r.returnDate = returnD;
+
+                    // If the user opens the program after the date expected to return,
+                    // the isAfter() method will automatically return the movie.
+                    if (returnD != null && LocalDate.now().isAfter(returnD)) {
+                        r.rentable = true;
+                    }
+
+                    movie_rentals.add(r);
                 }
-                rentalFileScanner.close();
+
             } catch (Exception e) {
                 System.out.println("No recent rentals file found.");
             }
         }
+
 
         System.out.println("MOVIE RENTAL SYSTEM:");
         while (true) {
@@ -287,8 +256,7 @@ public class Main {
                     if (movies.isEmpty()) {
                         System.out.println("No movies added.");
                         break;
-                    }
-                    else {
+                    } else {
                         System.out.println("\n--- Movie List ---");
                         System.out.printf("%-30s  %-12s  %-15s%n", "Movie Name", "Movie ID", "Status");
                         System.out.println("---------------------------------------------------------------");
@@ -373,6 +341,9 @@ public class Main {
                             input.nextLine();
                             System.out.print("Enter movie name to rent\n> ");
                             String movie_name = input.nextLine();
+                            if (movie_name.isEmpty()) {
+                                throw new Exception("Movie name cannot be empty. Press 'Enter' to try again.");
+                            }
 
                             for (Movie m : movies) {
                                 if (m.name.toLowerCase().contains(movie_name.toLowerCase())) {
@@ -413,11 +384,10 @@ public class Main {
 
                     break;
                 case 8: // Return a movie
-                    if (movie_rentals.isEmpty()) {
+                    if (movie_rentals.isEmpty()) { // verify if there are any movies rented
                         System.out.println("Nobody rented movies.");
                         break;
-                    }
-                    else if (students.isEmpty() && external_members.isEmpty()) {
+                    } else if (students.isEmpty() && external_members.isEmpty()) {
                         System.out.println("No students or regular members added. Add a student or regular member before renting a movie.");
                         break;
                     }
@@ -437,8 +407,7 @@ public class Main {
                             }
                         }
 
-                    }
-                    else if (inputRenterType.equalsIgnoreCase("Member")) {
+                    } else if (inputRenterType.equalsIgnoreCase("Member")) {
                         for (ExternalMember m : external_members) {
                             for (MovieRental r : movie_rentals) {
                                 if (r.customerID == m.customerID && !r.rentable) {
@@ -448,8 +417,7 @@ public class Main {
                             }
                         }
 
-                    }
-                    else {
+                    } else {
                         System.out.println("Invalid input. Please type 'Student' or 'Member'.");
                         break;
                     }
@@ -463,6 +431,8 @@ public class Main {
                     System.out.printf("%-20s %-12s%n", "Name", "Customer ID");
                     System.out.println("-------------------------------------");
                     for (Person p : rentersList) {
+                        /* iterate through Person object to people who have rentals
+                        instead of the whole Students or External Members list */
                         System.out.printf("%-20s %-12d%n", p.name, p.customerID);
                     }
                     System.out.println("-------------------------------------");
@@ -473,7 +443,7 @@ public class Main {
 
                     for (Person p : rentersList) {
                         if (p.customerID == renterId) {
-                            selectedRenter = p;
+                            selectedRenter = p; // set the selected renter
                             break;
                         }
                     }
@@ -489,7 +459,7 @@ public class Main {
                         }
                     }
 
-                    if (validRentals.isEmpty()) {
+                    if (validRentals.isEmpty()) { // verify if the renter has any rentals
                         System.out.println("This renter has no movies currently rented.");
                         break;
                     }
@@ -500,6 +470,8 @@ public class Main {
                     for (MovieRental rental1 : validRentals) {
                         for (Movie movie : movies) {
                             if (Integer.parseInt(movie.getMovieID()) == rental1.movieID) {
+                                // verify if movie ID matches ^
+                                // show movie name and ID
                                 movie.showWithoutStatus();
                             }
                         }
@@ -523,7 +495,7 @@ public class Main {
                                     movie_rentals.remove(rental2);
 
                                     System.out.println("Movie '" + movie.name + "' has been successfully returned.");
-                                    rental2.Info(true); // show fee
+                                    rental2.Info(true); // NOW show fee
 
                                     isReturned = true;
                                     break;
@@ -541,52 +513,81 @@ public class Main {
 
                 case 9: //Exit
                     System.out.println("Logging out...");
-                    try {
-                        FileWriter studentWriter = new FileWriter(studentFile);
-                        FileWriter memberWriter = new FileWriter(memberFile);
-                        FileWriter movieWriter = new FileWriter(movieFile);
-                        FileWriter rentalWriter = new FileWriter(rentalFile);
-                        for (Student s : students) {
-                            studentWriter.write(s.toString() + "\n---\n");
-                        }
-                        studentWriter.close();
-                        for (ExternalMember e : external_members) {
-                            memberWriter.write(e.toString() + "\n---\n");
-                        }
-                        memberWriter.close();
-                        for (Movie m : movies) {
-                            boolean available = Main.isAvailable(m.movieID, movie_rentals);
-                            movieWriter.write(m.toString(available) + "\n---\n");
-                        }
-                        movieWriter.close();
-                        for (MovieRental rental1 : movie_rentals) {
-                            rentalWriter.write(
-                                    "Customer ID: " + rental1.customerID + "\n" +
-                                            "Membership: " + rental1.membership + "\n" +
-                                            "Movie ID: " + rental1.movieID + "\n" +
-                                            "Nights Rented: " + rental1.nights_rented + "\n" +
-                                            "Begin Date: " + rental1.beginDate + "\n" +
-                                            "Return Date: " + rental1.returnDate + "\n" +
-                                            "Status: " + (rental1.rentable ? "Available" : "Rented") + "\n" +
-                                            "---\n"
-                            );
-                        }
-                        rentalWriter.close();
-                        System.out.println("Files saved.");
-                    }
-                    catch (IOException e) {
-                        System.out.println("Error saving files");
-                    }
-                    System.exit(0);
 
-                default:
-                    System.out.println("Invalid choice! Try again.\n");
-                    break;
+                    try {
+
+                        new File("data").mkdirs();
+                        // create data folder if it doesn't exist/ ensuring the directory exists
+                        // save students, members and movies in JSON format
+                        JSONArray studentArray = new JSONArray();
+                        for (Student s : students) {
+                            JSONObject obj = new JSONObject();
+                            // put() method stores data
+                            obj.put("name", s.name);
+                            obj.put("id", s.customerID);
+                            obj.put("schoolName", s.schoolName);
+                            obj.put("grade", s.grade);
+                            studentArray.put(obj);
+                        }
+                        try (FileWriter studentWriter = new FileWriter(studentFile)) {
+                            studentWriter.write(studentArray.toString(4)); // pretty print
+                        }
+
+                        JSONArray memberArray = new JSONArray();
+                        for (ExternalMember m : external_members) {
+                            JSONObject obj = new JSONObject();
+                            obj.put("name", m.name);
+                            obj.put("id", m.customerID);
+                            obj.put("job", m.job);
+                            obj.put("orgName", m.org_name);
+                            memberArray.put(obj);
+                        }
+                        try (FileWriter memberWriter = new FileWriter(memberFile)) {
+                            memberWriter.write(memberArray.toString(4));
+                        }
+
+                        JSONArray movieArray = new JSONArray();
+                        for (Movie m : movies) {
+                            JSONObject obj = new JSONObject();
+                            obj.put("name", m.name);
+                            obj.put("id", Integer.parseInt(m.getMovieID()));
+                            boolean available = isAvailable(Integer.parseInt(m.getMovieID()), movie_rentals);
+                            obj.put("available", available);
+                            movieArray.put(obj);
+                        }
+                        try (FileWriter movieWriter = new FileWriter(movieFile)) {
+                            movieWriter.write(movieArray.toString(4));
+                        }
+
+                        JSONArray rentalArray = new JSONArray();
+                        for (MovieRental r : movie_rentals) {
+                            JSONObject obj = new JSONObject();
+                            obj.put("customerID", r.customerID);
+                            obj.put("membershipType", r.membership);
+                            obj.put("movieID", r.movieID);
+                            obj.put("nights", r.nights_rented);
+                            obj.put("beginDate", r.beginDate != null ? r.beginDate.toString() : JSONObject.NULL);
+                            obj.put("returnDate", r.returnDate != null ? r.returnDate.toString() : JSONObject.NULL);
+                            obj.put("rentable", r.rentable);
+                            rentalArray.put(obj);
+                        }
+                        try (FileWriter rentalWriter = new FileWriter(rentalFile)) {
+                            rentalWriter.write(rentalArray.toString(4));
+                        }
+
+                        System.out.println("All data saved as JSON successfully.");
+
+                    } catch (IOException e) {
+                        System.out.println("Error saving files: " + e.getMessage());
+                    }
+
+                    System.exit(0); // exit the program
             }
-        }
+
+            }
     }
     /** Helper function to check if a movie is available for rental or not*/
-    private static boolean isAvailable(int movieID, ArrayList<MovieRental> rentals) {
+    public static boolean isAvailable(int movieID, List<MovieRental> rentals) {
         for (MovieRental r : rentals) {
             if (r.movieID == movieID && !r.rentable) {
                 return false; //is rented

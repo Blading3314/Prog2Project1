@@ -1,7 +1,7 @@
 /** Movie class. This class holds the movie information such as its name and ID.*/
 public class Movie {
-    int movieID;
-    String name;
+    public int movieID;
+    public String name;
     /** Movie class constructor and attribute initializer.*/
     Movie(int movieID, String name) {
         this.movieID = movieID;

@@ -2,13 +2,13 @@ import java.time.LocalDate;
 
 /** MovieRental class. Access information about a movie rental.*/
 public class MovieRental implements Payment {
-    int customerID;
-    String membership;
-    int movieID;
-    int nights_rented;
-    boolean rentable;
-    LocalDate beginDate;
-    LocalDate returnDate;
+    public int customerID;
+    public String membership;
+    public int movieID;
+    public int nights_rented;
+    public boolean rentable;
+    public LocalDate beginDate;
+    public LocalDate returnDate;
     /** MovieRental class constructor and attribute initializer.*/
     MovieRental(int customerID, String membership, int movieID, int nights_rented, boolean rentable) {
         this.customerID = customerID;
