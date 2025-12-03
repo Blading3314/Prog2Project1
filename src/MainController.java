@@ -1,4 +1,4 @@
-/*
+
 import javafx.beans.property.SimpleStringProperty;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
@@ -133,7 +133,6 @@ public class MainController {
             Stage dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.setTitle("Add a Student");
-            dialog.showAndWait();
             Label nameLabel = new Label("Student Name:");
             TextField nameField = new TextField();
             Label idLabel = new Label("Student ID:");
@@ -170,7 +169,6 @@ public class MainController {
             Stage dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.setTitle("Add a Member");
-            dialog.showAndWait();
             Label nameLabel = new Label("Member Name:");
             TextField nameField = new TextField();
             VBox layout = getBox(nameField, dialog, nameLabel);
@@ -187,5 +185,4 @@ public class MainController {
         return new VBox(10, nameLabel, nameField, idLabel, idField, addButton);
     }
 }
- */
 

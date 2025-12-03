@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
@@ -9,82 +8,82 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-         fx:controller="MainController">
-  <tabs>
-    <Tab text="Movies Info">
-      <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <children>
-                  <TableView fx:id="movieTable" layoutY="14.0" prefHeight="263.0" prefWidth="392.0">
-                     <columns>
-                        <TableColumn fx:id = "movIDCol" prefWidth="98.0" text="        Movie ID" />
-                        <TableColumn fx:id = "movNmCol" prefWidth="204.0" text="                      Movie Name" />
-                        <TableColumn fx:id = "statCol" prefWidth="89.0" text="       Status" />
-                     </columns>
-                  </TableView>
-                  <Button layoutX="457.0" layoutY="116.0" mnemonicParsing="false" text="Search a Movie" />
-                  <TextField layoutX="434.0" layoutY="90.0" />
-                  <Button fx:id="addmov" layoutX="470.0" layoutY="30.0" mnemonicParsing="false" onAction="#openAddMovies" text="Add a Movie" />
-                  <Button fx:id="addmov3" layoutX="483.0" layoutY="212.0" mnemonicParsing="false" text="Rent" />
-               </children></AnchorPane>
-      </content>
-    </Tab>
-    <Tab text="Students Info">
-      <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <children>
-                  <TableView fx:id="studentTable" layoutY="14.0" prefHeight="263.0" prefWidth="392.0">
-                     <columns>
-                        <TableColumn fx:id = "stuIDCol" prefWidth="76.0" text="Student ID" />
-                        <TableColumn fx:id = "stuNmCol" prefWidth="102.0" text="Student Name" />
-                        <TableColumn fx:id = "sklNmCol" prefWidth="97.0" text="School Name" />
-                        <TableColumn fx:id = "sklGrdCol" prefWidth="116.0" text="School Grade" />
-                     </columns>
-                  </TableView>
-                  <TextField layoutX="434.0" layoutY="90.0" />
-                  <Button layoutX="457.0" layoutY="116.0" mnemonicParsing="false" text="Search a Student" />
-                  <Button layoutX="470.0" layoutY="30.0" mnemonicParsing="false" onAction="#openAddStudents" text="Add a Student"/>
-               </children></AnchorPane>
-      </content>
-    </Tab>
-      <Tab text="Members Info">
-         <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <children>
-                  <TableView fx:id="memberTable" layoutY="14.0" prefHeight="263.0" prefWidth="392.0">
-                     <columns>
-                        <TableColumn fx:id = "membIDCol" prefWidth="81.0" text="Member ID" />
-                        <TableColumn fx:id = "membNmCol" prefWidth="107.0" text="Member Name" />
-                        <TableColumn fx:id = "jobCol" prefWidth="54.0" text="Job" />
-                        <TableColumn fx:id = "orgNmCol" prefWidth="149.0" text="Organization Name" />
-                     </columns>
-                  </TableView>
-                  <TextField layoutX="434.0" layoutY="90.0" />
-                  <Button layoutX="457.0" layoutY="116.0" mnemonicParsing="false" text="Search a Member" />
-                  <Button layoutX="470.0" layoutY="30.0" mnemonicParsing="false" onAction="#openAddMembers" text="Add a Member"/>
-               </children>
-            </AnchorPane>
-         </content>
-      </Tab>
-      <Tab text="Rentals Info">
-         <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <children>
-                  <TableView layoutX="14.0" layoutY="14.0" prefHeight="263.0" prefWidth="459.0">
-                     <columns>
-                        <TableColumn fx:id = "rentmovIDCol" prefWidth="94.0" text="Movie ID" />
-                        <TableColumn fx:id = "rentByCol" prefWidth="99.0" text="Rented by" />
-                        <TableColumn fx:id = "rentedOnCol" prefWidth="86.0" text="Rented on" />
-                        <TableColumn fx:id = "retDateCol" prefWidth="74.0" text="Return date" />
-                        <TableColumn fx:id = "nightCol" prefWidth="68.0" text="Night(s)" />
-                        <TableColumn minWidth="0.0" prefWidth="0.0" />
-                     </columns>
-                  </TableView>
-               </children>
-            </AnchorPane>
-         </content>
-      </Tab>
-  </tabs>
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainController">
+    <tabs>
+        <Tab text="Movies Info">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                    <children>
+                        <TableView fx:id="movieTable" layoutY="14.0" prefHeight="263.0" prefWidth="392.0">
+                            <columns>
+                                <TableColumn fx:id="movIDCol" prefWidth="105.0" text="Movie ID" />
+                                <TableColumn fx:id="movNmCol" prefWidth="183.0" text="Movie Name" />
+                                <TableColumn fx:id="statCol" prefWidth="103.0" text="Status" />
+                            </columns>
+                        </TableView>
+                        <Button layoutX="460.0" layoutY="115.0" mnemonicParsing="false" text="Search a Movie" />
+                        <TextField layoutX="434.0" layoutY="90.0" />
+                        <Button fx:id="addmov" layoutX="470.0" layoutY="30.0" mnemonicParsing="false" onAction="#openAddMovies" text="Add a Movie" />
+                        <Button fx:id="addmov3" layoutX="450.0" layoutY="186.0" mnemonicParsing="false" text="Rent" />
+                        <Button fx:id="addmov31" layoutX="512.0" layoutY="186.0" mnemonicParsing="false" text="Return" />
+                    </children></AnchorPane>
+            </content>
+        </Tab>
+        <Tab text="Students Info">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                    <children>
+                        <TableView fx:id="studentTable" layoutY="14.0" prefHeight="315.0" prefWidth="464.0">
+                            <columns>
+                                <TableColumn fx:id="stuIDCol" prefWidth="89.0" text="Student ID" />
+                                <TableColumn fx:id="stuNmCol" prefWidth="126.0" text="Student Name" />
+                                <TableColumn fx:id="sklGrdCol" prefWidth="160.0" text="School Name" />
+                                <TableColumn fx:id="stuNmCol1" prefWidth="88.0" text="Grade" />
+                            </columns>
+                        </TableView>
+                        <TextField layoutX="480.0" layoutY="90.0" prefHeight="25.0" prefWidth="103.0" />
+                        <Button layoutX="479.0" layoutY="115.0" mnemonicParsing="false" text="Search a Student" />
+                        <Button layoutX="486.0" layoutY="30.0" mnemonicParsing="false" onAction="#openAddStudents" text="Add a Student" />
+                    </children></AnchorPane>
+            </content>
+        </Tab>
+        <Tab text="Members Info">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                    <children>
+                        <TableView fx:id="memberTable" layoutY="14.0" prefHeight="263.0" prefWidth="392.0">
+                            <columns>
+                                <TableColumn fx:id="membIDCol" prefWidth="81.0" text="Member ID" />
+                                <TableColumn fx:id="membNmCol" prefWidth="107.0" text="Member Name" />
+                                <TableColumn fx:id="jobCol" prefWidth="54.0" text="Job" />
+                                <TableColumn fx:id="orgNmCol" prefWidth="149.0" text="Organization Name" />
+                            </columns>
+                        </TableView>
+                        <TextField layoutX="434.0" layoutY="90.0" />
+                        <Button layoutX="454.0" layoutY="115.0" mnemonicParsing="false" text="Search a Member" />
+                        <Button layoutX="470.0" layoutY="30.0" mnemonicParsing="false" onAction="#openAddMembers" text="Add a Member" />
+                    </children>
+                </AnchorPane>
+            </content>
+        </Tab>
+        <Tab text="Rentals Info">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="414.0" prefWidth="625.0">
+                    <children>
+                        <TableView layoutX="14.0" layoutY="14.0" prefHeight="294.0" prefWidth="495.0">
+                            <columns>
+                                <TableColumn fx:id="rentmovIDCol" prefWidth="71.0" text="Movie ID" />
+                                <TableColumn fx:id="rentByCol" prefWidth="78.0" text="Rented by" />
+                                <TableColumn fx:id="rentedOnCol" prefWidth="93.0" text="Rented on" />
+                                <TableColumn fx:id="retDateCol" prefWidth="94.0" text="Return date" />
+                                <TableColumn fx:id="nightCol" prefWidth="85.0" text="Night(s)" />
+                                <TableColumn minWidth="0.0" prefWidth="0.0" />
+                                <TableColumn fx:id="nightCol1" prefWidth="73.0" text="Fee" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </AnchorPane>
+            </content>
+        </Tab>
+    </tabs>
 </TabPane>

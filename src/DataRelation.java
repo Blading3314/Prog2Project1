@@ -1,4 +1,4 @@
-/*
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.util.ArrayList;
@@ -10,4 +10,3 @@ public class DataRelation {
     public static ObservableList<MovieRental> movie_rentals = FXCollections.observableArrayList();
 }
 
- */

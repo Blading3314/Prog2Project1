@@ -11,5 +11,8 @@
     <orderEntry type="library" name="json" level="project" />
     <orderEntry type="library" name="google.code.gson" level="project" />
     <orderEntry type="library" name="javafx-swt" level="project" />
+    <orderEntry type="library" name="javafx.base" level="project" />
+    <orderEntry type="library" name="SceneBuilder1" level="project" />
+    <orderEntry type="library" name="javafx.base1" level="project" />
   </component>
 </module>
